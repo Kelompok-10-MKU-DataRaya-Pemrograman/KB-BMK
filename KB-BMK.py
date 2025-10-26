@@ -12,3 +12,13 @@ class Kontainer:
         else:
             self.tarif = 0
 
+    # Anggita Nayla
+
+    def hitung_biaya(self, jumlah):
+        return self.tarif * jumlah
+
+def hitung_biaya(jenis, jumlah):
+    kontainer = Kontainer(jenis)
+    return kontainer.hitung_biaya(jumlah)
+
+
