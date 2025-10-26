@@ -53,3 +53,9 @@ def main():
             print("Jenis kontainer tidak valid. Gunakan 20 atau 40.")
 
     print("\nPerhitungan selesai.")
+
+# Akhmad Diandra Al-Fasya
+
+if __name__ == "__main__":
+    main()
+
