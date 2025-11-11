@@ -2,6 +2,7 @@
 
 import csv
 from datetime import datetime
+import sqlite3
 
 class Kontainer:
     def __init__(self, jenis):
@@ -20,12 +21,56 @@ def hitung_biaya(jenis, jumlah):
     kontainer = Kontainer(jenis)
     return kontainer.hitung_biaya(jumlah)
 
+def setup_database(db_name):
+    """Membuat koneksi DB dan tabel 'perhitungan' jika belum ada."""
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    
+    # Tabel untuk menyimpan riwayat semua hasil perhitungan
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS perhitungan (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        waktu_eksekusi TEXT,
+        pelabuhan TEXT,
+        jenis_kontainer TEXT,
+        jumlah INTEGER,
+        tarif_per_kontainer INTEGER,
+        total_biaya INTEGER
+    )
+    ''')
+    
+    conn.commit()
+    conn.close()
+
+def simpan_ke_db(db_name, data_list, timestamp):
+    """Menyimpan list data hasil perhitungan ke database."""
+    
+    # Menambahkan timestamp di awal setiap baris data
+    data_untuk_db = []
+    for row in data_list:
+        data_untuk_db.append( (timestamp, row[0], row[1], row[2], row[3], row[4]) )
+
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    
+    cursor.executemany('''
+    INSERT INTO perhitungan (
+        waktu_eksekusi, pelabuhan, jenis_kontainer, jumlah, tarif_per_kontainer, total_biaya
+    ) VALUES (?, ?, ?, ?, ?, ?)
+    ''', data_untuk_db)
+    
+    conn.commit()
+    conn.close()
+
 
 def main():
     print("=" * 50)
     print("KALKULATOR BIAYA BONGKAR MUAT KONTAINER (KB-BMK)")
     print("=" * 50)
     
+    db_name = 'riwayat_biaya.db' # Nama file Database
+    setup_database(db_name)    # Memanggil fungsi setup database
+
     output_data = []
     
     # FITUR IMPORT CSV
@@ -72,6 +117,13 @@ def main():
         # Buat nama file output dengan timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_filename = f"output_biaya_{timestamp}.csv"
+
+        # Menyimpan Riwayat ke Database
+        try:
+            simpan_ke_db(db_name, output_data, timestamp)
+            print(f"\nData telah disimpan ke database: {db_name}")
+        except Exception as e:
+            print(f"\nError saat menyimpan ke database: {e}")
 
         with open(output_filename, mode='w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
