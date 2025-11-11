@@ -29,17 +29,11 @@ Program ini sekarang bekerja dengan memproses data secara batch dari file .csv. 
 3. Pastikan Python versi 3.11 sudah terpasang.
 
 4. **Data Input**: Program ini memerlukan file data `.csv` untuk dijalankan. Sebuah file contoh `daftar_kapal.csv` sudah tersedia di repository.
-   > **Penting**: Pastikan file CSV Anda menggunakan **titik koma (`;`)** sebagai pemisah (delimiter) dan memiliki kolom-kolom: `Pelabuhan`, `Jenis`, dan `Jumlah`.
+   > **Penting**: Pastikan file CSV menggunakan **titik koma (`;`)** sebagai pemisah (delimiter) dan memiliki kolom-kolom: `Pelabuhan`, `Jenis`, dan `Jumlah`.
 
 5. **Jalankan program**:
    ```bash
    python KB-BMK.py
-
-6. Saat diminta, masukkan nama file CSV input Anda (contoh: `daftar_kapal.csv`).
-
-7. **Cek Hasil**: Setelah program selesai, Anda akan menemukan dua jenis output di folder Anda:
-   * File CSV baru (misal: `output_biaya_20251111_220000.csv`)
-   * File database `riwayat_biaya.db` (file ini akan dibuat jika belum ada dan akan diperbarui setiap kali program dijalankan).
 
 ---
 
