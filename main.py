@@ -76,7 +76,7 @@ def main():
     # FITUR IMPORT CSV
     input_filename = input("Masukkan nama file CSV input (contoh: daftar_kapal.csv): ")
 
-    print("Tarif 20 feet/kontainer : Rp 500,000")
+    print("\nTarif 20 feet/kontainer : Rp 500,000")
     print("Tarif 20 feet/kontainer : Rp 900,000")
 
     try:
