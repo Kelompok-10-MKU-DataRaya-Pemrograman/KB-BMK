@@ -77,7 +77,7 @@ def main():
     input_filename = input("Masukkan nama file CSV input (contoh: daftar_kapal.csv): ")
 
     print("\nTarif 20 feet/kontainer : Rp 500,000")
-    print("Tarif 20 feet/kontainer : Rp 900,000")
+    print("Tarif 40 feet/kontainer : Rp 900,000")
 
     try:
         with open(input_filename, mode='r', encoding='utf-8') as file:
