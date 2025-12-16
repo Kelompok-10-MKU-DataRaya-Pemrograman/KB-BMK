@@ -1,0 +1,112 @@
+services:
+  namenode:
+    image: bde2020/hadoop-namenode:latest
+    container_name: namenode
+    hostname: namenode
+    env_file:
+      - ./config
+    environment:
+      CLUSTER_NAME: mycluster
+      ENSURE_NAMENODE_DIR: "/hadoop/dfs/name"
+    ports:
+      - "9870:9870"
+    volumes:
+      # - ./data:/data
+      - ./hdfs/namenode:/hadoop/dfs/name
+      - ./hadoop/core-site.xml:/etc/hadoop/conf/core-site.xml
+      - ./hadoop/hdfs-site.xml:/etc/hadoop/conf/hdfs-site.xml
+    command: ["/run.sh"]
+
+  datanode1:
+    image: bde2020/hadoop-datanode:latest
+    container_name: dn1
+    hostname: dn1
+    ports:
+      - "9864:9864"
+    env_file:
+      - ./config
+    environment:
+      - SERVICE_PRECONDITION=namenode:9870
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - HDFS_CONF_dfs_datanode_address=0.0.0.0:9866
+      - HDFS_CONF_dfs_datanode_http_address=0.0.0.0:9864
+      - HDFS_CONF_dfs_datanode_ipc_address=0.0.0.0:9867
+      - HDFS_CONF_dfs_permissions_enabled=false
+    volumes:
+      - ./hdfs/datanode1:/hadoop/dfs/data
+      - ./hadoop/core-site.xml:/etc/hadoop/conf/core-site.xml
+      - ./hadoop/hdfs-site.xml:/etc/hadoop/conf/hdfs-site.xml
+    command: ["/run.sh"]
+
+  datanode2:
+    image: bde2020/hadoop-datanode:latest
+    container_name: dn2
+    hostname: dn2
+    ports:
+      - "9865:9864"
+    env_file:
+      - ./config
+    environment:
+      - SERVICE_PRECONDITION=namenode:9870
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - HDFS_CONF_dfs_datanode_address=0.0.0.0:9866
+      - HDFS_CONF_dfs_datanode_http_address=0.0.0.0:9864
+      - HDFS_CONF_dfs_datanode_ipc_address=0.0.0.0:9867
+      - HDFS_CONF_dfs_permissions_enabled=false
+    volumes:
+      - ./hdfs/datanode2:/hadoop/dfs/data
+      - ./hadoop/core-site.xml:/etc/hadoop/conf/core-site.xml
+      - ./hadoop/hdfs-site.xml:/etc/hadoop/conf/hdfs-site.xml
+    command: ["/run.sh"]
+
+  datanode3:
+    image: bde2020/hadoop-datanode:latest
+    container_name: dn3
+    hostname: dn3
+    ports:
+      - "9866:9864"
+    env_file:
+      - ./config
+    environment:
+      - SERVICE_PRECONDITION=namenode:9870
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - HDFS_CONF_dfs_datanode_address=0.0.0.0:9866
+      - HDFS_CONF_dfs_datanode_http_address=0.0.0.0:9864
+      - HDFS_CONF_dfs_datanode_ipc_address=0.0.0.0:9867
+      - HDFS_CONF_dfs_permissions_enabled=false
+    volumes:
+      - ./hdfs/datanode3:/hadoop/dfs/data
+      - ./hadoop/core-site.xml:/etc/hadoop/conf/core-site.xml
+      - ./hadoop/hdfs-site.xml:/etc/hadoop/conf/hdfs-site.xml
+    command: ["/run.sh"]
+
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
+    container_name: resourcemanager
+    hostname: resourcemanager
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+      - YARN_CONF_yarn_resourcemanager_address=resourcemanager:8032
+      - YARN_CONF_yarn_resourcemanager_scheduler_address=resourcemanager:8030
+      - YARN_CONF_yarn_resourcemanager_resource_tracker_address=resourcemanager:8031
+      - YARN_CONF_yarn_nodemanager_aux_services=mapreduce_shuffle
+      - YARN_CONF_yarn_nodemanager_aux_services_mapreduce_shuffle_class=org.apache.hadoop.mapred.ShuffleHandler
+  nodemanager:
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    container_name: nodemanager
+    hostname: nodemanager
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+      - YARN_CONF_yarn_resourcemanager_address=resourcemanager:8032
+      - YARN_CONF_yarn_resourcemanager_scheduler_address=resourcemanager:8030
+      - YARN_CONF_yarn_resourcemanager_resource_tracker_address=resourcemanager:8031
+      - YARN_CONF_yarn_nodemanager_remote_app_log_dir=/app-logs
+      - YARN_CONF_yarn_nodemanager_local_dirs=/nodemanager/local
+      - YARN_CONF_yarn_nodemanager_log_dirs=/nodemanager/log
+
+
