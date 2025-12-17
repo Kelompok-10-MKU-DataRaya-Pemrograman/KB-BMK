@@ -1,6 +1,0 @@
-=== HASIL ANALISIS 2 ===
-2025-12-16 04:16:51,180 INFO sasl.SaslDataTransferClient: SASL encryption trust check: localHostTrusted = false, remoteHostTrusted = false
-20 feet 892566
-40 feet 890293
-
-Selesai.
