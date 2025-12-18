@@ -14,36 +14,34 @@ docker-compose exec namenode mkdir -p /data
 echo [2/6] Menyalin Hadoop Streaming JAR...
 docker cp ./data/tools/hadoop-streaming-2.7.3.jar namenode:/data/hadoop-streaming.jar
 
-@REM 3. Copy script Python KHUSUS ANALISIS 2 dan Big Data
-echo [3/6] Menyalin script Python Analisis 2...
-@REM Pastikan Anda sudah membuat mapper_jenis.py dan reducer_jenis.py di folder data/code
-docker cp ./data/code/mapper_jenis.py namenode:/data/mapper_jenis.py
-docker cp ./data/code/reducer_jenis.py namenode:/data/reducer_jenis.py
+@REM 3. Copy mapper, reducer, dan input BIG DATA
+echo [3/6] Menyalin script Python dan Big Data...
+docker cp ./data/code/mapper.py namenode:/data/mapper.py
+docker cp ./data/code/reducer.py namenode:/data/reducer.py
 docker cp ./data/input/big_data_biaya_pelabuhan.csv namenode:/data/input.csv
 
-@REM 4. Siapkan HDFS (Hapus output_analisis2 lama jika ada)
+@REM 4. Siapkan HDFS (Hapus output lama jika ada)
 echo [4/6] Membersihkan HDFS...
 docker-compose exec namenode hdfs dfs -mkdir -p /user/student/input
-@REM Hapus output khusus analisis 2 agar bersih
-docker-compose exec namenode hdfs dfs -rm -r /user/student/output_analisis2
+docker-compose exec namenode hdfs dfs -rm -r /user/student/output_analisis1
 
 @REM 5. Upload data ke HDFS
 echo [5/6] Upload input ke HDFS...
 docker-compose exec namenode hdfs dfs -put -f /data/input.csv /user/student/input/input.csv
 
 @REM 6. Jalankan Hadoop Streaming
-echo [6/6] Menjalankan MapReduce Job Analisis 2...
+echo [6/6] Menjalankan MapReduce Job...
 docker-compose exec namenode hadoop jar /data/hadoop-streaming.jar ^
- -files /data/mapper_jenis.py,/data/reducer_jenis.py ^
- -mapper "python3 mapper_jenis.py" ^
- -reducer "python3 reducer_jenis.py" ^
+ -files /data/mapper.py,/data/reducer.py ^
+ -mapper "python3 mapper.py" ^
+ -reducer "python3 reducer.py" ^
  -input /user/student/input/input.csv ^
- -output /user/student/output_analisis2
+ -output /user/student/output_analisis1
 
 @REM 7. Lihat Hasil
 echo.
 echo === HASIL ANALISIS 2 (Total Jumlah Kontainer per Jenis) ===
-docker-compose exec namenode hdfs dfs -cat /user/student/output_analisis2/part-00000
+docker-compose exec namenode hdfs dfs -cat /user/student/output_analisis1/part-00000
 
 echo.
 echo Selesai.
